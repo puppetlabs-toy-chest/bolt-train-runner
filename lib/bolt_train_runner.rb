@@ -50,6 +50,8 @@ class BoltTrainRunner
         Commands.throttle(args, comms)
       when /^move$/i
         Commands.move(args, comms)
+      when /^stop$/i
+        Commands.stop(comms)
       when /^exit$/i
         Commands.exit_program(comms)
       else
@@ -66,6 +68,7 @@ class BoltTrainRunner
     puts 'power - Turn power on or off to the train'.cyan
     puts 'throttle - Set throttle to a value between 0 and 10'.cyan
     puts 'move - Move the train in the given direction at the given speed for a certain length of time'.cyan
+    puts 'stop - Stop the train'.cyan
     puts 'exit - Exit program'.cyan
   end
 
