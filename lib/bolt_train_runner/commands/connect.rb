@@ -27,6 +27,7 @@ module Commands
 
     puts "Connecting to ws://#{server}/json/".green
     comms = Comms.new(server)
+    puts "Connected".green
     return comms
   end
 end
