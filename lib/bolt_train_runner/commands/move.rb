@@ -1,4 +1,6 @@
 require 'bolt_train_runner/comms'
+require 'bolt_train_runner/commands/throttle'
+require 'bolt_train_runner/commands/stop'
 require 'colorize'
 
 module Commands
@@ -35,31 +37,10 @@ module Commands
       return
     end
 
-    message = {
-      'type'   => 'throttle',
-      'method' => 'put',
-      'data'   => {
-        'throttle' => 'bolttrain',
-        'address'  => '6871',
-        'speed'    => "#{speed/10.0}",
-        'forward'  => "#{direction == 'forward'}"
-      }
-    }
-    comms.send_message(message)
-    puts "Train moving #{direction} at speed #{speed}".green
-    puts "Waiting #{time} seconds".green
+    puts "Moving train #{direction} direction at speed #{speed} for #{time} seconds...".green
+    Commands.throttle([speed,direction],comms)
     sleep(time)
-    puts "Stopping train".green
-    message = {
-      'type'   => 'throttle',
-      'method' => 'post',
-      'data'   => {
-        'throttle' => 'bolttrain',
-        'address'  => '6871',
-        'speed'    => '0'
-      }
-    }
-    comms.send_message(message)
+    Commands.stop(comms)
     puts 'Move complete'.green
   end
 end
