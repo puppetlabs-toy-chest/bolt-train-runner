@@ -2,7 +2,7 @@ require 'colorize'
 require 'bolt_train_runner/commands/throttle'
 
 module Commands
-  def self.stop(comms)
+  def self.stop(_args, comms)
     unless comms
       puts 'Please connect first'.red
       return

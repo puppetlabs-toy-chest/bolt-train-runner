@@ -15,18 +15,22 @@ module Commands
       return
     end
 
-    speed = args[0].to_i
+    if args.is_a?(Hash)
+      speed = args['speed']
+      direction = args['direction']
+    else
+      speed, direction = args
+    end
+    
+    speed = speed.to_i
     if speed < 0 or speed > 10
       puts 'Please select a speed between 0 and 10'.red
       return
     end
-    direction = nil
-    if args.length > 1
-      direction = args[1]
-      unless ['forward','reverse'].include?(direction)
-        puts 'Direction must be either "forward" or "reverse"'.red
-        return
-      end
+
+    unless direction.nil? || ['forward','reverse'].include?(direction)
+      puts 'Direction must be either "forward" or "reverse"'.red
+      return
     end
 
     message = {

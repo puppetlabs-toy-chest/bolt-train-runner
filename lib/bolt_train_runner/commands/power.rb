@@ -13,7 +13,13 @@ module Commands
       puts 'Turns power to the train on or off. Must first be connected.'.cyan
       return
     end
-    state = args[0]
+
+    if args.is_a?(Hash)
+      state = args['state']
+    else
+      state = args[0]
+    end
+    
     unless ['on','off'].include?(state)
       puts 'Please provide either "on" or "off"'.red
       return
@@ -30,5 +36,6 @@ module Commands
       }
     }
     comms.send_message(message)
+    puts "Power #{state}".green
   end
 end

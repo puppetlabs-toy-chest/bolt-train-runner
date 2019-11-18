@@ -17,13 +17,21 @@ module Commands
       return
     end
 
-    if args.length < 3
+
+    if args.is_a?(Hash)
+      direction = args['direction']
+      speed = args['speed']
+      time = args['time']
+    else
+      direction, speed, time = args
+    end
+  
+    unless direction && speed && time
       puts 'Please provide direction, speed, and time'.red
       return
     end
-    direction = args[0]
-    speed = args[1].to_i
-    time = args[2].to_i
+    speed = speed.to_i
+    time = time.to_i
     unless ['forward','reverse'].include?(direction)
       puts 'Please provide "forward" or "reverse" for direction'.red
       return
@@ -40,7 +48,7 @@ module Commands
     puts "Moving train #{direction} direction at speed #{speed} for #{time} seconds...".green
     Commands.throttle([speed,direction],comms)
     sleep(time)
-    Commands.stop(comms)
+    Commands.stop(nil, comms)
     puts 'Move complete'.green
   end
 end
