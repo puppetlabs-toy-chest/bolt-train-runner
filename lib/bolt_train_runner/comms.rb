@@ -2,7 +2,6 @@ require 'websocket-client-simple'
 require 'json'
 require 'colorize'
 require 'bolt_train_runner/conf'
-require 'pry-byebug'
 
 # Sending and receiving responses is a little bit funky
 # Since we have to receive messages asynchronously, and because
@@ -18,7 +17,6 @@ class Comms
   @heartbeat_thread = nil
   @consumer_thread = nil
   @kill_threads = false
-  @queue = []
 
   def initialize(server)
     debug = Conf.debug
