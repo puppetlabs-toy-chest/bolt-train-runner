@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'colorize'
 require 'bolt_train_runner/comms'
+require 'bolt_train_runner/session_runner'
 
 # Load all commands
 Dir[File.join(File.absolute_path(__dir__) + '/bolt_train_runner/commands') + "/**/*.rb"].each do |file|
@@ -24,6 +25,7 @@ class BoltTrainRunner
 
   def run
     comms = nil
+    session_runner = nil
     puts 'Welcome to the Bolty McBoltTrain Runner! Choo choo!'.cyan
     puts 'To list all commands, enter "help"'.cyan
     puts 'For help with a specific command, enter "<command> help"'.cyan
@@ -33,29 +35,36 @@ class BoltTrainRunner
       input = gets.chomp
       args = input.split(' ')
       command = args.shift
+
       case command
       when /^help$/i
         help
+      when Commands.respond_to?(command)
+        puts 'Commands can run this'
       when /^connect$/i
         newcomms = Commands.connect(args)
         comms = newcomms if newcomms
       when /^disconnect$/i
+        session_runner.stop if session_runner
+        session_runner = nil
         Commands.disconnect(comms)
         comms = nil
+      when /^sessions$/i
+        session_runner = Commands.sessions(args, comms, session_runner)
       when /^debug$/i
         Commands.debug(args)
-      when /^power$/i
-        Commands.power(args, comms)
-      when /^throttle$/i
-        Commands.throttle(args, comms)
-      when /^move$/i
-        Commands.move(args, comms)
-      when /^stop$/i
-        Commands.stop(comms)
       when /^exit$/i
-        Commands.exit_program(comms)
+        Commands.exit_program(comms, session_runner)
       else
-        puts "Unknown command: #{command}".red
+        if Commands.respond_to?(command)
+          # The commands for directly manipulating the train should all
+          # accept "args" and "comms" parameters. Because the CLI will pass
+          # in args as an array and the session runner will pass in a hash,
+          # these commands must be able to handle both.
+          Commands.send(command.to_sym, args, comms)
+        else
+          puts "Unknown command: #{command}".red
+        end
       end
     end
   end
