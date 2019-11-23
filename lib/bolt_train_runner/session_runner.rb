@@ -35,9 +35,13 @@ class SessionRunner
 
   def run_thread
     while !@kill_thread
-      files = Dir["#{@session_dir}/*.json"].sort_by { |f| File.mtime(f) }
+      files = Dir["#{@session_dir}/*"].sort_by { |f| File.mtime(f) }
       files.each do |f|
-        data = JSON.parse(File.read(f))
+        begin
+          data = JSON.parse(File.read(f))
+        rescue
+          next
+        end
         session = data['session']
         email = session['email']
         puts "[Session Runner] Starting session for #{email}".magenta
