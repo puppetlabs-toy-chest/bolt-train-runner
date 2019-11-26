@@ -1,24 +1,24 @@
-require 'colorize'
 require 'bolt_train_runner/conf'
+require 'bolt_train_runner/log'
 
 module Commands
-  def self.debug(args)
+  def self.debug(args, log)
     if args.empty? || args[0] =~ /help/i
-      puts 'Command: debug'.cyan
-      puts 'Syntax: debug <on|off>'.cyan
+      log.help('Command: debug')
+      log.help('Syntax: debug <on|off>')
       #Should fix this at some point 
-      puts 'Turns debug logging on or off. Will require disconnecting and reconnecting to take effect.'.cyan
-      puts 'Choice will be persistent across program invocations.'.cyan
+      log.help('Turns debug logging on or off. Choice will be persistent across program invocations.')
       return
     end
     state = args[0]
     if !['on','off'].include?(state)
-      puts 'Debug must be called with either "on" or "off"'.red
+      log.error('Debug must be called with either "on" or "off"')
       return
     end
     conf = Conf.load_conf
     conf['debug'] = state == 'on'
     Conf.save_conf(conf)
-    puts "Debug mode #{state}".green
+    state == 'on' ? log.set_console_level('DEBUG') : log.set_console_level('INFO')
+    log.info("Debug mode #{state}")
   end
 end

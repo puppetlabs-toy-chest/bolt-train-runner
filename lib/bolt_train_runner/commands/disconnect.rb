@@ -1,13 +1,13 @@
 require 'bolt_train_runner/comms'
-require 'colorize'
+require 'bolt_train_runner/log'
 
 module Commands
-  def self.disconnect(comms)
+  def self.disconnect(comms, log)
     if comms.nil?
-      puts 'Not currently connected'.red
+      log.error('Not currently connected')
       return
     end
     comms.disconnect
-    puts 'Disconnected'.green
+    log.info('Disconnected')
   end
 end

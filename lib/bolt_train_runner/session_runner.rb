@@ -13,14 +13,16 @@ class SessionRunner
 
   @session_thread = nil
   @kill_thread = false
+  @log = nil
 
-  def initialize(comms, session_dir)
+  def initialize(comms, session_dir, log)
     raise 'comms must not be nil' if comms.nil?
     raise 'session_dir must not be nil' if session_dir.nil?
     raise 'session_dir does not exist' unless File.exist?(session_dir)
 
     @session_dir = session_dir
     @comms = comms
+    @log = log
   end
 
   def start
@@ -29,7 +31,7 @@ class SessionRunner
 
   def stop
     @kill_thread = true
-    puts 'Stopping Session Runner'.magenta
+    @log.info('Stopping Session Runner')
     @session_thread.join if @session_thread
   end
 
@@ -44,17 +46,17 @@ class SessionRunner
         end
         session = data['session']
         email = session['email']
-        puts "[Session Runner] Starting session for #{email}".magenta
+        @log.info("[Session Runner] Starting session for #{email}")
         commands = session['commands']
         commands.each do |args|
           c = args['command']
           args.delete('command')
-          puts "[Session Runner] Sending command #{c}".magenta
-          puts "[Session Runner] Arguments = #{args}".magenta
-          Commands.send(c, args, @comms)
+          @log.info("[Session Runner] Sending command #{c}")
+          @log.info("[Session Runner] Arguments = #{args}")
+          Commands.send(c, args, @comms, @log)
         end
         File.delete(f)
-        puts "[Session Runner] Session for #{email} complete".magenta
+        @log.info("[Session Runner] Session for #{email} complete")
       end
     end
   end

@@ -1,7 +1,8 @@
 require 'websocket-client-simple'
 require 'json'
-require 'colorize'
 require 'bolt_train_runner/conf'
+require 'bolt_train_runner/log'
+require 'pry-byebug'
 
 # Sending and receiving responses is a little bit funky
 # Since we have to receive messages asynchronously, and because
@@ -17,16 +18,17 @@ class Comms
   @heartbeat_thread = nil
   @consumer_thread = nil
   @kill_threads = false
+  @log = nil
 
-  def initialize(server)
-    debug = Conf.debug
-    @ws = WebSocket::Client::Simple.connect("ws://#{server}/json/")
-    @ws.on :message do |msg|
+  def initialize(server, log)
+    @log = log
+    @ws = WebSocket::Client::Simple.connect("ws://#{server}/json/", @log)
+    @ws.on :message do |msg, logger|
       data = JSON.parse(msg.data)
-      puts "Received #{data}" if (data['type'] != 'hello') if debug
+      logger.debug("Received #{data}\n> ")
     end
-    @ws.on :error do |e|
-      puts "Error from Websocket: #{e}".red
+    @ws.on :error do |e, logger|
+      logger.error("Error from Websocket: #{e}")
     end
 
     @heartbeat_thread = Thread.new { run_heartbeat }
@@ -54,9 +56,8 @@ class Comms
   # Expects a hash with the correctly formed message, which
   # will get transformed to a JSON string by this function
   def send_message(message)
-    debug = Conf.debug
     message = JSON.generate(message)
-    puts "Sending #{message}" if debug
+    @log.debug("Sending #{message}")
     @ws.send(message)
   end
 

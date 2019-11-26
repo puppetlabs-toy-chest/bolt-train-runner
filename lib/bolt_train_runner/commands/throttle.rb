@@ -1,17 +1,17 @@
 require 'bolt_train_runner/comms'
-require 'colorize'
+require 'bolt_train_runner/log'
 
 module Commands
-  def self.throttle(args, comms)
+  def self.throttle(args, comms, log)
     unless comms
-      puts 'Please connect first'.red
+      log.error('Please connect first')
       return
     end
     if args.empty? || args[0] =~ /help/i
-      puts 'Command: throttle'.cyan
-      puts 'Syntax: throttle <0-10> [forward|reverse]'.cyan
-      puts 'Sets the throttle to the given level, between 0 and 10. May optionally provide a direction.'.cyan
-      puts 'Note that power must be on first for this to take effect.'.cyan
+      log.help('Command: throttle')
+      log.help('Syntax: throttle <0-10> [forward|reverse]')
+      log.help('Sets the throttle to the given level, between 0 and 10. May optionally provide a direction.')
+      log.help('Note that power must be on first for this to take effect.')
       return
     end
 
@@ -24,12 +24,12 @@ module Commands
     
     speed = speed.to_i
     if speed < 0 or speed > 10
-      puts 'Please select a speed between 0 and 10'.red
+      log.error('Please select a speed between 0 and 10')
       return
     end
 
     unless direction.nil? || ['forward','reverse'].include?(direction)
-      puts 'Direction must be either "forward" or "reverse"'.red
+      log.error('Direction must be either "forward" or "reverse"')
       return
     end
 
@@ -45,6 +45,6 @@ module Commands
     message['data']['forward'] = direction == 'forward' if direction
     comms.send_message(message)
     direction_string = direction.nil? ? '' : " with direction #{direction}"
-    puts "Throttle set to #{speed}#{direction_string}".green
+    log.info("Throttle set to #{speed}#{direction_string}")
   end
 end

@@ -1,16 +1,16 @@
 require 'bolt_train_runner/comms'
-require 'colorize'
+require 'bolt_train_runner/log'
 
 module Commands
-  def self.power(args, comms)
+  def self.power(args, comms, log)
     unless comms
-      puts 'Please connect first'.red
+      log.error('Please connect first')
       return
     end
     if args.empty? || args[0] =~ /help/i
-      puts 'Command: power'.cyan
-      puts 'Syntax: power <on|off>'.cyan
-      puts 'Turns power to the train on or off. Must first be connected.'.cyan
+      log.help('Command: power')
+      log.help('Syntax: power <on|off>')
+      log.help('Turns power to the train on or off. Must first be connected.')
       return
     end
 
@@ -21,7 +21,7 @@ module Commands
     end
     
     unless ['on','off'].include?(state)
-      puts 'Please provide either "on" or "off"'.red
+      log.error('Please provide either "on" or "off"')
       return
     end
 
@@ -36,6 +36,6 @@ module Commands
       }
     }
     comms.send_message(message)
-    puts "Power #{state}".green
+    log.info("Power #{state}")
   end
 end
