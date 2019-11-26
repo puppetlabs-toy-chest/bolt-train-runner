@@ -46,7 +46,7 @@ class Log
   end
 
   def info_console(msg)
-    info(msg, true, false)
+    info(msg.green, true, false)
   end
 
   def info_file(msg)
@@ -59,7 +59,7 @@ class Log
   end
 
   def warn_console(msg)
-    warn(msg, true, false)
+    warn(msg.yellow, true, false)
   end
 
   def warn_file(msg)
@@ -72,7 +72,7 @@ class Log
   end
 
   def error_console(msg)
-    error(msg, true, false)
+    error(msg.red, true, false)
   end
 
   def error_file(msg)
@@ -85,7 +85,7 @@ class Log
   end
 
   def fatal_console(msg)
-    fatal(msg, true, false)
+    fatal(msg.red, true, false)
   end
 
   def fatal_file(msg)
