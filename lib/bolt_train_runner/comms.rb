@@ -2,7 +2,6 @@ require 'websocket-client-simple'
 require 'json'
 require 'bolt_train_runner/conf'
 require 'bolt_train_runner/log'
-require 'pry-byebug'
 
 # Sending and receiving responses is a little bit funky
 # Since we have to receive messages asynchronously, and because
