@@ -55,6 +55,8 @@ class BoltTrainRunner
         Commands.debug(args, log)
       when /^exit$/i
         Commands.exit_program(comms, session_runner, log)
+      when nil
+        next
       else
         if Commands.respond_to?(command)
           # The commands for directly manipulating the train should all
